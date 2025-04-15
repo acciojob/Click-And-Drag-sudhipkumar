@@ -36,6 +36,50 @@
 
 <script>
 //Your code goes here 
+	const cubes = document.querySelectorAll('.cube');
+let selectedCube = null;
+let offsetX, offsetY;
+
+cubes.forEach(cube => {
+    cube.addEventListener('mousedown', (e) => {
+        selectedCube = cube;
+        offsetX = e.clientX - cube.getBoundingClientRect().left;
+        offsetY = e.clientY - cube.getBoundingClientRect().top;
+
+        // Add mousemove and mouseup event listeners
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    });
+});
+
+function mouseMoveHandler(e) {
+    if (!selectedCube) return;
+
+    // Calculate new position
+    let newX = e.clientX - offsetX;
+    let newY = e.clientY - offsetY;
+
+    // Get container boundaries
+    const container = document.querySelector('.container');
+    const containerRect = container.getBoundingClientRect();
+
+    // Ensure the cube stays within the container
+    const maxX = containerRect.width - selectedCube.offsetWidth;
+    const maxY = containerRect.height - selectedCube.offsetHeight;
+
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+
+    // Update cube position
+    selectedCube.style.left = `${newX}px`;
+    selectedCube.style.top = `${newY}px`;
+}
+
+function mouseUpHandler() {
+    selectedCube = null; // Reset selected cube
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+}
 </script>
 
   </body>
