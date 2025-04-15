@@ -18,11 +18,13 @@ todos.forEach(todo => {
 
 list.addEventListener('dragover', (e) => {
   e.preventDefault();
-  const afterElement = getDragAfterElement(list, e.clientY);
-  if (afterElement == null) {
-    list.appendChild(dragged);
-  } else {
-    list.insertBefore(dragged, afterElement);
+  if (dragged) {
+    const afterElement = getDragAfterElement(list, e.clientY);
+    if (afterElement == null) {
+      list.appendChild(dragged);
+    } else {
+      list.insertBefore(dragged, afterElement);
+    }
   }
 });
 
