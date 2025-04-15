@@ -36,15 +36,17 @@
 
 <script>
 //Your code goes here 
-	const cubes = document.querySelectorAll('.cube');
-let selectedCube = null;
-let offsetX, offsetY;
+	const items = document.querySelectorAll('.item');
+let selectedItem = null;
+let offsetX = 0;
+let offsetY = 0;
 
-cubes.forEach(cube => {
-    cube.addEventListener('mousedown', (e) => {
-        selectedCube = cube;
-        offsetX = e.clientX - cube.getBoundingClientRect().left;
-        offsetY = e.clientY - cube.getBoundingClientRect().top;
+// Add event listeners to each item
+items.forEach(item => {
+    item.addEventListener('mousedown', (e) => {
+        selectedItem = item;
+        offsetX = e.clientX - item.getBoundingClientRect().left;
+        offsetY = e.clientY - item.getBoundingClientRect().top;
 
         // Add mousemove and mouseup event listeners
         document.addEventListener('mousemove', mouseMoveHandler);
@@ -52,33 +54,38 @@ cubes.forEach(cube => {
     });
 });
 
+// Function to handle mouse movement
 function mouseMoveHandler(e) {
-    if (!selectedCube) return;
+    if (!selectedItem) return;
 
-    // Calculate new position
+    // Calculate new position based on mouse movement
     let newX = e.clientX - offsetX;
     let newY = e.clientY - offsetY;
 
-    // Get container boundaries
-    const container = document.querySelector('.container');
+    // Get the parent container's boundaries
+    const container = document.querySelector('.items');
     const containerRect = container.getBoundingClientRect();
 
-    // Ensure the cube stays within the container
-    const maxX = containerRect.width - selectedCube.offsetWidth;
-    const maxY = containerRect.height - selectedCube.offsetHeight;
+    // Ensure the item stays within the container
+    const maxX = containerRect.width - selectedItem.offsetWidth;
+    const maxY = containerRect.height - selectedItem.offsetHeight;
 
     newX = Math.max(0, Math.min(newX, maxX));
     newY = Math.max(0, Math.min(newY, maxY));
 
-    // Update cube position
-    selectedCube.style.left = `${newX}px`;
-    selectedCube.style.top = `${newY}px`;
+    // Update the item's position
+    selectedItem.style.position = 'absolute';
+    selectedItem.style.left = `${newX}px`;
+    selectedItem.style.top = `${newY}px`;
 }
 
+// Function to handle mouse release
 function mouseUpHandler() {
-    selectedCube = null; // Reset selected cube
-    document.removeEventListener('mousemove', mouseMoveHandler);
-    document.removeEventListener('mouseup', mouseUpHandler);
+    if (selectedItem) {
+        selectedItem = null; // Reset selected item
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    }
 }
 </script>
 
