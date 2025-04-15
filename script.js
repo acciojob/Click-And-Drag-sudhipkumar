@@ -18,6 +18,10 @@ todos.forEach(todo => {
 
 list.addEventListener('dragover', (e) => {
   e.preventDefault();
+});
+
+list.addEventListener('drop', (e) => {
+  e.preventDefault();
   if (dragged) {
     const afterElement = getDragAfterElement(list, e.clientY);
     if (afterElement == null) {
@@ -30,7 +34,6 @@ list.addEventListener('dragover', (e) => {
 
 function getDragAfterElement(container, y) {
   const elements = [...container.querySelectorAll('.todo:not(:hover)')];
-
   return elements.reduce((closest, child) => {
     const box = child.getBoundingClientRect();
     const offset = y - box.top - box.height / 2;
