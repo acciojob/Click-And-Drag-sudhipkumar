@@ -1,43 +1,41 @@
-// Your code here.
-  const container = document.querySelector('.items');
-  const cubes = document.querySelectorAll('.item');
-  let selected = null;
-  let offsetX = 0;
-  let offsetY = 0;
+const todos = document.querySelectorAll('.todo');
+const list = document.getElementById('todo-list');
+let dragged = null;
 
-  cubes.forEach(cube => {
-    cube.addEventListener('mousedown', (e) => {
-      selected = cube;
-      const rect = cube.getBoundingClientRect();
-      const parentRect = container.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    });
+todos.forEach(todo => {
+  todo.addEventListener('dragstart', () => {
+    dragged = todo;
+    setTimeout(() => todo.style.display = 'none', 0);
   });
 
-  function onMouseMove(e) {
-    if (!selected) return;
+  todo.addEventListener('dragend', () => {
+    setTimeout(() => {
+      dragged.style.display = 'block';
+      dragged = null;
+    }, 0);
+  });
+});
 
-    const parentRect = container.getBoundingClientRect();
-    let x = e.clientX - parentRect.left - offsetX;
-    let y = e.clientY - parentRect.top - offsetY;
-
-    // Boundaries
-    const maxX = parentRect.width - selected.offsetWidth;
-    const maxY = parentRect.height - selected.offsetHeight;
-    x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
-
-    selected.style.left = `${x}px`;
-    selected.style.top = `${y}px`;
+list.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  const afterElement = getDragAfterElement(list, e.clientY);
+  if (afterElement == null) {
+    list.appendChild(dragged);
+  } else {
+    list.insertBefore(dragged, afterElement);
   }
+});
 
-  function onMouseUp() {
-    if (selected) {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-      selected = null;
+function getDragAfterElement(container, y) {
+  const elements = [...container.querySelectorAll('.todo:not(:hover)')];
+
+  return elements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
     }
-  }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
